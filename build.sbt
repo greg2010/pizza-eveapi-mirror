@@ -2,7 +2,7 @@ name := "eveapi"
 
 organization := "moe.pizza"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.2"
 
 isSnapshot := true
 
@@ -17,17 +17,32 @@ buildSources := {
 compile <<= (compile in Compile) dependsOn buildSources
 test <<= (test in Test) dependsOn buildSources
 
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+publishTo := Some("Artifactory Realm" at "http://maven.red.greg2010.me/artifactory/sbt-local")
+
+libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "0.12.0"
 resolvers += Resolver.bintrayRepo("andimiller", "maven")
 
-val slickVersion = "3.0.1"
+val slickVersion = "3.2.0"
+val HTTP4S_VERSION = "0.15.0a"
+
+val circeVersion = "0.8.0"
 
 libraryDependencies ++= Seq(
-  "org.scala-lang.modules"       %% "scala-xml"                % "1.0.3",
-  "org.scala-lang.modules"       %% "scala-parser-combinators" % "1.0.3",
-  "net.databinder.dispatch"      %% "dispatch-core"            % "0.11.3",
-  "net.debasishg"                %% "redisclient"              % "3.0",
-  "org.json4s"                   %% "json4s-jackson"           % "3.2.10",
-  "com.fasterxml.jackson.module" %% "jackson-module-scala"     % "2.6.1",
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
+
+libraryDependencies ++= Seq(
+  "org.scala-lang.modules"       %% "scala-xml"                % "1.0.6",
+  "org.scala-lang.modules"       %% "scala-parser-combinators" % "1.0.6",
+  "org.http4s"                   %% "http4s-blaze-client"      % HTTP4S_VERSION,
+  "org.http4s"                   %% "http4s-scala-xml"         % HTTP4S_VERSION,
+  "org.http4s"                   %% "http4s-circe"             % HTTP4S_VERSION,
+  "net.debasishg"                %% "redisclient"              % "3.4",
+  "org.json4s"                   %% "json4s-jackson"           % "3.5.2",
+  "com.fasterxml.jackson.module" %% "jackson-module-scala"     % "2.8.8",
   "org.eclipse.jetty.websocket"  % "websocket-client"          % "9.3.5.v20151012",
   "joda-time"                    % "joda-time"                 % "2.8.2",
   "org.joda"                     % "joda-convert"              % "1.2",
@@ -38,7 +53,7 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq (
-  "org.scalatest"          %% "scalatest" % "2.2.4" % "test",
+  "org.scalatest"          %% "scalatest" % "3.0.3" % "test",
   "com.github.tomakehurst" % "wiremock"   % "1.33"  % "test"
 )
 
@@ -61,7 +76,5 @@ slickGenerate := {
 
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
-
-bintrayReleaseOnPublish in ThisBuild := true
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
