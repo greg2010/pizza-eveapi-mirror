@@ -20,7 +20,8 @@ test <<= (test in Test) dependsOn buildSources
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 publishTo := Some("Artifactory Realm" at "http://maven.red.greg2010.me/artifactory/sbt-local")
 
-libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "0.12.0"
+val dispatchVersion = "0.12.0"
+libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % dispatchVersion
 resolvers += Resolver.bintrayRepo("andimiller", "maven")
 
 val slickVersion = "3.2.0"
